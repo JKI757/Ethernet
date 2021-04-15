@@ -39,12 +39,12 @@
 #define MAX_SOCK_NUM 8
 #endif
 
-// By default, each socket uses 2K buffers inside the WIZnet chip.  If
+// By default, each socket uses 2K buffers inside the Wiznet chip.  If
 // MAX_SOCK_NUM is set to fewer than the chip's maximum, uncommenting
-// this will use larger buffers within the WIZnet chip.  Large buffers
+// this will use larger buffers within the Wiznet chip.  Large buffers
 // can really help with UDP protocols like Artnet.  In theory larger
 // buffers should allow faster TCP over high-latency links, but this
-// does not always seem to work in practice (maybe WIZnet bugs?)
+// does not always seem to work in practice (maybe Wiznet bugs?)
 //#define ETHERNET_LARGE_BUFFERS
 
 
@@ -84,7 +84,7 @@ public:
 	static EthernetLinkStatus linkStatus();
 	static EthernetHardwareStatus hardwareStatus();
 
-	// Manual configuration
+	// Manaul configuration
 	static void begin(uint8_t *mac, IPAddress ip);
 	static void begin(uint8_t *mac, IPAddress ip, IPAddress dns);
 	static void begin(uint8_t *mac, IPAddress ip, IPAddress dns, IPAddress gateway);
@@ -132,6 +132,7 @@ private:
 	// or more calls to bufferData and then finally sent with sendUDP.
 	// return true if the datagram was successfully set up, or false if there was an error
 	static bool socketStartUDP(uint8_t s, uint8_t* addr, uint16_t port);
+	static bool socketStartUDPBroadCast(uint8_t s, uint16_t port);
 	// copy up to len bytes of data from buf into a UDP datagram to be
 	// sent later by sendUDP.  Allows datagrams to be built up from a series of bufferData calls.
 	// return Number of bytes successfully buffered
@@ -140,6 +141,8 @@ private:
 	// calls to bufferData.
 	// return true if the datagram was successfully sent, or false if there was an error
 	static bool socketSendUDP(uint8_t s);
+	static bool socketSendUDP_RAW(uint8_t s);
+
 	// Initialize the "random" source port number
 	static void socketPortRand(uint16_t n);
 };
@@ -174,9 +177,13 @@ public:
 	// Start building up a packet to send to the remote host specific in host and port
 	// Returns 1 if successful, 0 if there was a problem resolving the hostname or port
 	virtual int beginPacket(const char *host, uint16_t port);
+	virtual int beginPacketBroadCast( uint16_t port );
+
 	// Finish off this packet and send it
 	// Returns 1 if the packet was sent successfully, 0 if there was an error
 	virtual int endPacket();
+	virtual int endPacket_RAW();
+
 	// Write a single byte into the packet
 	virtual size_t write(uint8_t);
 	// Write size bytes from buffer into the packet
