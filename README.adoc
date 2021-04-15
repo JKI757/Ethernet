@@ -9,6 +9,25 @@ image:https://github.com/{repository-owner}/{repository-name}/actions/workflows/
 
 With the Arduino Ethernet Shield, this library allows an Arduino board to connect to the internet.
 
+
+
+The original version of this library doesn't allow for a UDP Broadcast to be sent.  This version adds the necessary
+"glue" to make that work correctly and adds two user facing functions to enable this functionality: 
+
+EthernetUDP::beginPacketBroadcast(uint16_t port);
+
+EthernetUDP::endPacket_RAW();
+
+
+An example is also added to show the usage, which looks like this:
+
+    Udp.beginPacketBroadcast(broadcastPort);
+    Udp.write(Buffer);
+    Udp.endPacket_RAW();
+
+
+
+
 For more information about this library please visit us at
 https://www.arduino.cc/en/Reference/{repository-name}
 
